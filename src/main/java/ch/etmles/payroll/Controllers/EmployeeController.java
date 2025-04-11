@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("employees")
 public class EmployeeController {
 
     private final EmployeeRepository repository;
@@ -18,7 +19,7 @@ public class EmployeeController {
     /* curl sample :
     curl -i localhost:8080/employees
     */
-    @GetMapping("/employees")
+    @GetMapping
     List<Employee> all(){
         return repository.findAll();
     }
@@ -28,7 +29,7 @@ public class EmployeeController {
         -H "Content-type:application/json" \
         -d "{\"name\": \"Russel George\", \"role\": \"gardener\", \"email\": \"Russel.George@example.com\", \"departement\": {\"id\": 1}}"
     */
-    @PostMapping("/employees")
+    @PostMapping
     Employee newEmployee(@RequestBody Employee newEmployee){
         return repository.save(newEmployee);
     }
@@ -36,7 +37,7 @@ public class EmployeeController {
     /* curl sample :
     curl -i localhost:8080/employees/1
     */
-    @GetMapping("/employees/{id}")
+    @GetMapping("{id}")
     Employee one(@PathVariable Long id){
         return repository.findById(id)
                 .orElseThrow(() -> new EmployeeNotFoundException(id));
@@ -47,7 +48,7 @@ public class EmployeeController {
         -H "Content-type:application/json" \
         -d "{\"name\": \"Samwise Bing\", \"role\": \"peer-to-peer\", \"email\": \"Samwise.Bing@example.com\", \"departement\": {\"id\": 2}}"
      */
-    @PutMapping("/employees/{id}")
+    @PutMapping("{id}")
     Employee replaceEmployee(@RequestBody Employee newEmployee, @PathVariable Long id) {
         return repository.findById(id)
                 .map(employee -> {
@@ -66,7 +67,7 @@ public class EmployeeController {
     /* curl sample :
     curl -i -X DELETE localhost:8080/employees/2
     */
-    @DeleteMapping("/employees/{id}")
+    @DeleteMapping("{id}")
     void deleteEmployee(@PathVariable Long id){
         repository.deleteById(id);
     }

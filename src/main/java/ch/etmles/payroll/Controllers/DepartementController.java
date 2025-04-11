@@ -9,12 +9,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ch.etmles.payroll.Entities.Departement;
 import ch.etmles.payroll.Repositories.DepartementRepository;
 
-@RestController
+@RestController()
+@RequestMapping("departements")
 public class DepartementController {
     private final DepartementRepository repository;
 
@@ -25,7 +27,7 @@ public class DepartementController {
     /* curl sample :
     curl -i localhost:8080/departements
     */
-    @GetMapping("/departements")
+    @GetMapping
     List<Departement> all() {
         return repository.findAll();
     }
@@ -35,7 +37,7 @@ public class DepartementController {
         -H "Content-type:application/json" ^
         -d "{\"name\": \"IT\"}"
     */
-    @PostMapping("/departements")
+    @PostMapping
     Departement newDepartement(@RequestBody Departement newDepartement) {
         return repository.save(newDepartement);
     }
@@ -43,7 +45,7 @@ public class DepartementController {
     /* curl sample :
     curl -i localhost:8080/departements/1
     */
-    @GetMapping("/departements/{id}")
+    @GetMapping("{id}")
     Departement one(@PathVariable Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new DepartementNotFoundException(id));
@@ -54,8 +56,8 @@ public class DepartementController {
         -H "Content-type:application/json" ^
         -d "{\"name\": \"HR\"}"
      */
-    @PutMapping("/departements/{id}")
-    @PatchMapping("/departements/{id}")
+    @PutMapping("{id}")
+    @PatchMapping("{id}")
     Departement replaceDepartement(@RequestBody Departement newDepartement, @PathVariable Long id) {
         return repository.findById(id)
                 .map(departement -> {
@@ -71,7 +73,7 @@ public class DepartementController {
     /* curl sample :
     curl -i -X DELETE localhost:8080/departements/2
      */
-    @DeleteMapping("/departements/{id}")
+    @DeleteMapping("{id}")
     void deleteDepartement(@PathVariable Long id) {
         repository.deleteById(id);
     }
