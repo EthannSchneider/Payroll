@@ -1,10 +1,15 @@
 package ch.etmles.payroll.Entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
 import java.util.Objects;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 public class Employee {
@@ -14,11 +19,26 @@ public class Employee {
     private String name;
     private String role;
 
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    private Departement departement;
+
+    @Column(nullable = false, unique = true)
+    private String email;
+
     public Employee(){}
 
-    public Employee(String name, String role){
+    public Employee(String name, String role, String email) {
         this.setName(name);
         this.setRole(role);
+        this.setEmail(email);
+    }
+
+    public Employee(String name, String role, String email, Departement departement) {
+        this.setName(name);
+        this.setRole(role);
+        this.setEmail(email);
+        this.setDepartement(departement);
     }
 
     public Long getID(){
@@ -45,6 +65,25 @@ public class Employee {
         this.role = role;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+            throw new IllegalArgumentException("Invalid email format");
+        }
+        this.email = email;
+    }
+
+    public Departement getDepartement() {
+        return departement;
+    }
+
+    public void setDepartement(Departement departement) {
+        this.departement = departement;
+    }
+
     @Override
     public boolean equals(Object o){
         if(this == o)
@@ -53,7 +92,8 @@ public class Employee {
             return false;
         return  Objects.equals(this.id, employee.id) &&
                 Objects.equals(this.name, employee.name) &&
-                Objects.equals(this.role, employee.role);
+                Objects.equals(this.role, employee.role) &&
+                Objects.equals(this.email, employee.email);
     }
 
     @Override
@@ -61,7 +101,8 @@ public class Employee {
         return Objects.hash(
                 this.id,
                 this.name,
-                this.role);
+                this.role,
+                this.email);
     }
 
     @Override
@@ -69,7 +110,7 @@ public class Employee {
         return "Employee{" + "id=" +
                 this.getID() + ", name='" +
                 this.getName() + '\'' + ", role='" +
-                this.getRole() + '\'' +
+                this.getRole() + '\'' + ", email='" + this.getEmail() + '\'' +
                 '}';
     }
 }
