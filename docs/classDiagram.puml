@@ -19,6 +19,17 @@ package "Controllers"
     class EmployeeNotFoundException{
         +EmployeeNotFoundException(Long id)
     }
+    class DepartementController{
+        -repository : DepartementRepository
+        +all() : List<Departement>
+        +newDepartement(Departement newDepartement) : Departement
+        +one(Long id) : Departement
+        +replaceDepartement(Departement newDepartement, Long id) : Departement
+        +deleteDepartement(Long id) : void
+    }
+    class DepartementNotFoundException{
+        +DepartementNotFoundException(Long id)
+    }
 }
 
 package "Entities"
@@ -27,26 +38,55 @@ package "Entities"
         -id : Long
         -name : String
         -role : String
+        -email : String
+        -departement : Departement
+        +Employee()
+        +Employee(String name, String role, String email)
+        +Employee(String name, String role, String email, Departement departement)
         +getID() : Long
         +setId(Long id) : void
         +getName() : String
         +setName(String name) : void
         +getRole() : String
         +setRole(String role) : void
+        +getEmail() : String
+        +setEmail(String email) : void
+        +getDepartement() : Departement
+        +setDepartement(Departement departement) : void
+    }
+    class Departement{
+        -id : Long
+        -name : String
+        -employees : List<Employee>
+        +Departement()
+        +Departement(String name)
+        +getId() : Long
+        +setId(Long id) : void
+        +getName() : String
+        +setName(String name) : void
+        +getEmployees() : List<Employee>
     }
 }
 
 package "Repositories"
 {
     interface EmployeeRepository{}
+    interface DepartementRepository{}
 }
 
 'relations
 EmployeeController --> Employee
 EmployeeController --> EmployeeRepository
+EmployeeController ..> EmployeeNotFoundException : throws
 
 EmployeeRepository --> Employee : manages
 
-EmployeeController ..> EmployeeNotFoundException : throws
-EmployeeNotFoundAdvice --> EmployeeNotFoundException
+EmployeeController ..> Departement : uses
+Employee --> Departement : belongs to
+
+DepartementController --> Departement
+DepartementController --> DepartementRepository
+DepartementController ..> DepartementNotFoundException : throws
+
+DepartementRepository --> Departement : manages
 @enduml
