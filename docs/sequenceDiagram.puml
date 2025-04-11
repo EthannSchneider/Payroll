@@ -1,0 +1,114 @@
+@startuml
+
+actor User
+participant "EmployeeController" as Controller
+participant "EmployeeRepository" as Repository
+participant "Employee" as Entity
+
+User -> Controller: newEmployee(Employee newEmployee)
+activate Controller
+
+Controller -> Entity: create instance
+activate Entity
+Entity --> Controller: instance created
+deactivate Entity
+
+Controller -> Repository: save(newEmployee)
+activate Repository
+
+Repository --> Controller: saved Employee
+deactivate Repository
+
+Controller --> User: Employee created
+deactivate Controller
+
+User -> Controller: all()
+activate Controller
+
+Controller -> Repository: findAll()
+activate Repository
+
+Repository -> Entity: fetch all instances
+activate Entity
+Entity --> Repository: all instances fetched
+deactivate Entity
+
+Repository --> Controller: List<Employee>
+deactivate Repository
+
+Controller --> User: List<Employee>
+deactivate Controller
+
+User -> Controller: getEmployee(int id)
+activate Controller
+
+Controller -> Repository: findById(id)
+activate Repository
+
+Repository -> Entity: fetch instance
+activate Entity
+Entity --> Repository: instance fetched
+deactivate Entity
+
+Repository --> Controller: Employee instance
+deactivate Repository
+
+alt Employee not found
+    Controller --> User: EmployeeNotFoundException
+else Employee found
+    Controller --> User: Employee details
+end
+deactivate Controller
+
+User -> Controller: replaceEmployee(Employee newEmployee, int id)
+activate Controller
+
+Controller -> Repository: findById(id)
+activate Repository
+
+alt Employee found
+    Repository --> Controller: Employee instance
+    deactivate Repository
+
+    Controller -> Entity: update instance
+    activate Entity
+    Entity --> Controller: instance updated
+    deactivate Entity
+
+    Controller -> Repository: save(updated Employee)
+    activate Repository
+    Repository --> Controller: saved Employee
+    deactivate Repository
+
+    Controller --> User: Employee updated
+else Employee not found
+    Repository --> Controller: EmployeeNotFoundException
+    deactivate Repository
+
+    Controller -> Entity: create new instance with id
+    activate Entity
+    Entity --> Controller: instance created
+    deactivate Entity
+
+    Controller -> Repository: save(new Employee with id)
+    activate Repository
+    Repository --> Controller: saved Employee
+    deactivate Repository
+
+    Controller --> User: Employee created
+end
+deactivate Controller
+
+User -> Controller: deleteEmployee(int id)
+activate Controller
+
+Controller -> Repository: deleteById(id)
+activate Repository
+
+Repository --> Controller: deletion confirmed
+deactivate Repository
+
+Controller --> User: Employee deleted
+deactivate Controller
+
+@enduml
