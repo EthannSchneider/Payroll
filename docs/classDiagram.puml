@@ -5,24 +5,47 @@ skinparam classAttributeIconSize 0
 'packages
 package "Controllers"
 {
-    class EmployeeController{}
-    class EmployeeNotFoundAdvice{}
-    class EmployeeNotFoundException{}
+    class EmployeeController{
+        -repository : EmployeeRepository
+        +all() : List<Employee>
+        +newEmployee(Employee newEmployee) : Employee
+        +one(Long id) : Employee
+        +replaceEmployee(Employee newEmployee, Long id) : Employee
+        +deleteEmployee(Long id) : void
+    }
+    class EmployeeNotFoundAdvice{
+        +employeeNotFoundHandler(EmployeeNotFoundException) : String
+    }
+    class EmployeeNotFoundException{
+        +EmployeeNotFoundException(Long id)
+    }
 }
 
 package "Entities"
 {
-    class Employee{}
+    class Employee{
+        -id : Long
+        -name : String
+        -role : String
+        +getID() : Long
+        +setId(Long id) : void
+        +getName() : String
+        +setName(String name) : void
+        +getRole() : String
+        +setRole(String role) : void
+    }
 }
 
 package "Repositories"
 {
-    class EmployeeRepository{}
+    interface EmployeeRepository{}
 }
 
 'relations
 EmployeeController --> Employee
 EmployeeController --> EmployeeRepository
+
+EmployeeRepository --> Employee : manages
 
 EmployeeController ..> EmployeeNotFoundException : throws
 EmployeeNotFoundAdvice --> EmployeeNotFoundException
